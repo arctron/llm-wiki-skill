@@ -40,6 +40,7 @@ A wiki root is the directory that contains `WIKI.md`.
 7. Never silently overwrite an existing claim. Existing pages change only through an approved diff.
 8. Never contradict or drop an active pin. If new evidence conflicts with a pin, stop and ask.
 9. Do not add `CLAUDE.md`, `.cursorrules`, or other harness-specific instruction files. `AGENTS.md` is the only always-on pointer.
+10. Never write a wiki (`WIKI.md`, `docs/`, `raw/`) into the git repository that contains this `SKILL.md`. Wikis are always separate repos.
 
 ## Apply gate
 
@@ -70,14 +71,13 @@ From the wiki root:
 
 Scaffold a **new** GitHub repo. Do not ingest in this operation.
 
-1. Collect: topic title; slug (lowercase hyphenated); GitHub owner (`gh api user --jq .login` if unset); local path (default `./wiki-<slug>` next to the current workspace if the user did not specify); copyright holder (`git config user.name`).
-2. If the path exists and is not empty: stop.
-3. Copy `assets/wiki-template/` into the path (`cp -R "$SKILL_ROOT/assets/wiki-template/." "$WIKI_ROOT/"`). Run the rest of init inside `$WIKI_ROOT`.
-4. Replace every schema token in the copied files. Repo name defaults to `wiki-<slug>`. Pages URL is `https://<owner>.github.io/<repo>/`.
-5. Fill `WIKI.md` scope in one short paragraph. If you must guess the scope, ask instead.
-6. `git init -b main`, `git add -A`, commit: `init: wiki scaffold for <topic>`.
-7. `gh repo create <owner>/<repo> --public --source=. --remote=origin --push`. Enable Pages from Actions: `gh api --method POST "repos/<owner>/<repo>/pages" -f build_type=workflow`. If Pages already exists, continue.
-8. Web-search the topic. Run **propose-sources** and **stop**. Do not ingest.
+1. Collect: topic title; slug (lowercase hyphenated); GitHub owner (`gh api user --jq .login` if unset); local path; copyright holder (`git config user.name`); date (`YYYY-MM-DD`). If the user did not give a path: use `../wiki-<slug>` when the current git root contains this skill; otherwise `./wiki-<slug>`. The path must be outside the skill's git root.
+2. If the path exists and is not empty: stop. If the path would land inside the skill repo: stop.
+3. Read [references/init.md](references/init.md). Write every listed file into `$WIKI_ROOT` with tokens replaced. Repo name defaults to `wiki-<slug>`. Pages URL is `https://<owner>.github.io/<repo>/`. Run the rest of init inside `$WIKI_ROOT`.
+4. Fill `WIKI.md` scope in one short paragraph. If you must guess the scope, ask instead.
+5. `git init -b main`, `git add -A`, commit: `init: wiki scaffold for <topic>`.
+6. `gh repo create <owner>/<repo> --public --source=. --remote=origin --push`. Enable Pages from Actions: `gh api --method POST "repos/<owner>/<repo>/pages" -f build_type=workflow`. If Pages already exists, continue.
+7. Web-search the topic. Run **propose-sources** and **stop**. Do not ingest.
 
 If `gh` is missing or unauthenticated: leave the local repo committed and print the exact commands for the user.
 

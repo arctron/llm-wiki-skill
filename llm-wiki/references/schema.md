@@ -27,9 +27,7 @@ docs/meta/pins.md
 
 `raw/` is not part of the site. Do not put wiki prose there.
 
-## Tokens (init only)
-
-Replace in the template: `__TOPIC__` `__SLUG__` `__GITHUB_OWNER__` `__GITHUB_REPO__` `__PAGES_URL__` `__YEAR__` `__COPYRIGHT_HOLDER__`.
+Empty-wiki file contents for a new repo are in [init.md](init.md).
 
 ## WIKI.md
 
