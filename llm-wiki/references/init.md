@@ -1,6 +1,6 @@
 # Init files
 
-Write these paths under `$WIKI_ROOT`. Replace `__TOPIC__` `__SLUG__` `__GITHUB_OWNER__` `__GITHUB_REPO__` `__PAGES_URL__` `__YEAR__` `__DATE__` `__COPYRIGHT_HOLDER__` in every file. Create empty `raw/sources/.gitkeep`.
+Write these paths under `$WIKI_ROOT`. Replace `__TOPIC__` `__SLUG__` `__GITHUB_OWNER__` `__GITHUB_REPO__` `__PAGES_URL__` `__YEAR__` `__DATE__` `__COPYRIGHT_HOLDER__` in every file.
 
 Wiki page bodies and later edits follow [schema.md](schema.md), not this file.
 
@@ -28,7 +28,7 @@ This repository is an LLM wiki instance.
 
 Before ingesting, querying, linting, or editing `docs/` or `raw/`, load the `llm-wiki` skill (`llm-wiki/SKILL.md`).
 
-If the skill is not installed, clone https://github.com/arctron/llm-wiki-skill and copy the `llm-wiki/` directory into your agent's skills folder.
+If the skill is not installed, clone https://github.com/arctron/llm-wiki-skill and copy the `llm-wiki/` directory into your agent's skills folder. Install paths are in that repository's README.
 
 Instance config: `WIKI.md`.
 ```
@@ -38,9 +38,11 @@ Instance config: `WIKI.md`.
 ```markdown
 # __TOPIC__
 
-LLM-maintained wiki. Site: <__PAGES_URL__>
+LLM-maintained wiki. Read it on GitHub Pages: <__PAGES_URL__>
 
-Pages are `docs/`. Source snapshots (excerpts only) are `raw/`. Maintained with [llm-wiki](https://github.com/arctron/llm-wiki-skill). See `AGENTS.md`.
+Sources are curated one at a time. Wiki pages live in `docs/`. Immutable source snapshots (excerpts only) live in `raw/`.
+
+Maintained with the [llm-wiki](https://github.com/arctron/llm-wiki-skill) skill. If you use an agent, see `AGENTS.md`.
 ```
 
 ## `LICENSE`
@@ -198,7 +200,7 @@ status: stub
 
 ## Scope
 
-See the repository `WIKI.md` for instance scope. This page is the evolving public thesis.
+See [WIKI.md](https://github.com/__GITHUB_OWNER__/__GITHUB_REPO__/blob/main/WIKI.md) for the instance scope. This page is the evolving public thesis.
 
 ## Current thesis
 
@@ -270,7 +272,7 @@ last_modified_date: __DATE__
 
 # Sources
 
-One summary page per ingested source. Excerpts live in `raw/sources/` in git, not on this site.
+One summary page per ingested source. Full third-party text is not stored; excerpts live in `raw/sources/` in the git repo, not on this site.
 ```
 
 ## `docs/concepts/index.md`
@@ -286,7 +288,7 @@ last_modified_date: __DATE__
 
 # Concepts
 
-Ideas compiled across sources.
+Ideas compiled across sources. Child pages appear in the sidebar as they are created.
 ```
 
 ## `docs/entities/index.md`
@@ -302,7 +304,7 @@ last_modified_date: __DATE__
 
 # Entities
 
-People, organizations, products, and places.
+People, organizations, products, and places. Child pages appear in the sidebar as they are created.
 ```
 
 ## `docs/analyses/index.md`
@@ -318,7 +320,7 @@ last_modified_date: __DATE__
 
 # Analyses
 
-Filed answers to questions asked against this wiki.
+Filed answers to questions asked against this wiki. Child pages appear in the sidebar as they are created.
 ```
 
 ## `docs/meta/index.md`
@@ -334,7 +336,7 @@ last_modified_date: __DATE__
 
 # Meta
 
-Operation log and pins.
+Operation log and pins. Pins are human (or previously approved) corrections that later ingests must not clobber.
 ```
 
 ## `docs/meta/log.md`
@@ -372,3 +374,7 @@ last_modified_date: __DATE__
 
 None yet.
 ```
+
+## `raw/sources/.gitkeep`
+
+Empty file. Write a single newline.

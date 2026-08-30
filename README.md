@@ -22,8 +22,10 @@ git clone git@github.com:arctron/llm-wiki-skill.git
 ln -s "$(pwd)/llm-wiki-skill/llm-wiki" ~/.agents/skills/llm-wiki
 ```
 
-Needs `git`, `python3`, and `gh` (logged in) to create and push wiki repos.
+Needs `git`, `python3` (stdlib only), and `gh` (logged in) to create/push wiki repos and enable Pages.
 
 ## Use
 
-With the skill installed, in any repo *except this one*: “start a wiki on \<topic\>”. The skill scaffolds a new public GitHub repo, enables Pages, proposes sources, and stops. Then: ingest, query, lint, pin — always against that wiki repo.
+You can run init from this clone. The wiki path must be outside this git root; if you do not pass a path, the skill uses a sibling of this clone named `wiki-<slug>`. Then ingest, query, lint, and pin against that wiki repo.
+
+The first GitHub Actions run may wait for you to approve the `github-pages` environment on the wiki repo.

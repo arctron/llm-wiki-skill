@@ -40,7 +40,7 @@ A wiki root is the directory that contains `WIKI.md`.
 7. Never silently overwrite an existing claim. Existing pages change only through an approved diff.
 8. Never contradict or drop an active pin. If new evidence conflicts with a pin, stop and ask.
 9. Do not add `CLAUDE.md`, `.cursorrules`, or other harness-specific instruction files. `AGENTS.md` is the only always-on pointer.
-10. Never write a wiki (`WIKI.md`, `docs/`, `raw/`) into the git repository that contains this `SKILL.md`. Wikis are always separate repos.
+10. Never write a wiki (`WIKI.md`, `docs/`, `raw/`) into `$SKILL_ROOT` or into the git repository that contains this `SKILL.md`. Wikis are always separate repos.
 
 ## Apply gate
 
@@ -71,8 +71,10 @@ From the wiki root:
 
 Scaffold a **new** GitHub repo. Do not ingest in this operation.
 
-1. Collect: topic title; slug (lowercase hyphenated); GitHub owner (`gh api user --jq .login` if unset); local path; copyright holder (`git config user.name`); date (`YYYY-MM-DD`). If the user did not give a path: use `../wiki-<slug>` when the current git root contains this skill; otherwise `./wiki-<slug>`. The path must be outside the skill's git root.
-2. If the path exists and is not empty: stop. If the path would land inside the skill repo: stop.
+1. Collect: topic title; slug (lowercase hyphenated); GitHub owner (`gh api user --jq .login` if unset); local path; copyright holder (`git config user.name`); `__DATE__` = today `YYYY-MM-DD`; `__YEAR__` = four-digit year of `__DATE__`. Remaining tokens are the names in [references/init.md](references/init.md).
+   Default path when unset: `SKILL_GIT_ROOT=$(git -C "$SKILL_ROOT" rev-parse --show-toplevel)`, then `$WIKI_ROOT` = absolute `<SKILL_GIT_ROOT>/../wiki-<slug>` (sibling of the skill clone, independent of cwd). If that git command fails, ask for an absolute path.
+   Resolve `$WIKI_ROOT` to an absolute path. Stop if it is `$SKILL_ROOT`, `$SKILL_GIT_ROOT`, or a subdirectory of either.
+2. If the path exists and is not empty: stop.
 3. Read [references/init.md](references/init.md). Write every listed file into `$WIKI_ROOT` with tokens replaced. Repo name defaults to `wiki-<slug>`. Pages URL is `https://<owner>.github.io/<repo>/`. Run the rest of init inside `$WIKI_ROOT`.
 4. Fill `WIKI.md` scope in one short paragraph. If you must guess the scope, ask instead.
 5. `git init -b main`, `git add -A`, commit: `init: wiki scaffold for <topic>`.

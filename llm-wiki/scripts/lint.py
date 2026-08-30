@@ -18,6 +18,7 @@ REQUIRED_WIKI_KEYS = (
 REQUIRED_PAGE_KEYS = ("title", "layout", "nav_order")
 RAW_MAX_BYTES = 64_000
 WIKILINK_RE = re.compile(r"\[\[[^\]]+\]\]")
+TOKEN_RE = re.compile(r"__[A-Z][A-Z0-9_]*__")
 MD_LINK_RE = re.compile(r"\[(?:[^\]]*)\]\(([^)]+)\)")
 FM_RE = re.compile(r"\A---\n(.*?)\n---\n?", re.DOTALL)
 PIN_PAGE_RE = re.compile(r"^-\s*page:\s*(\S+)\s*$", re.MULTILINE)
@@ -96,6 +97,11 @@ def catalog_targets(root: Path, catalog_text: str) -> Set[Path]:
     return found
 
 
+def leftover_tokens(rel: str, text: str, errors: List[str]) -> None:
+    for match in TOKEN_RE.finditer(text):
+        errors.append("{0}: leftover init token `{1}`".format(rel, match.group(0)))
+
+
 def body_of(text: str) -> str:
     m = FM_RE.match(text)
     if m:
@@ -111,6 +117,7 @@ def lint(root: Path) -> List[str]:
 
     wiki_text = wiki_md.read_text(encoding="utf-8")
     wiki_fm = parse_frontmatter(wiki_text)
+    leftover_tokens("WIKI.md", wiki_text, errors)
     if wiki_fm is None:
         errors.append("WIKI.md: missing YAML frontmatter")
     else:
@@ -134,6 +141,7 @@ def lint(root: Path) -> List[str]:
         "_config.yml",
         "Gemfile",
         ".github/workflows/pages.yml",
+        "raw/sources/.gitkeep",
     ]
     for rel in required_files:
         if not (root / rel).is_file():
@@ -150,6 +158,7 @@ def lint(root: Path) -> List[str]:
     for path in pages:
         rel = rel_docs(root, path).as_posix()
         text = path.read_text(encoding="utf-8")
+        leftover_tokens(rel, text, errors)
         fm = parse_frontmatter(text)
         if fm is None:
             errors.append(f"{rel}: missing YAML frontmatter")
@@ -218,6 +227,7 @@ def lint(root: Path) -> List[str]:
             if size > RAW_MAX_BYTES:
                 errors.append(f"{rel}: {size} bytes exceeds {RAW_MAX_BYTES} (full scrape?)")
             raw_text = path.read_text(encoding="utf-8")
+            leftover_tokens(rel, raw_text, errors)
             raw_fm = parse_frontmatter(raw_text)
             if raw_fm is None:
                 errors.append(f"{rel}: missing YAML frontmatter")
@@ -225,6 +235,11 @@ def lint(root: Path) -> List[str]:
                 for key in ("url", "title", "retrieved", "slug"):
                     if not raw_fm.get(key):
                         errors.append(f"{rel}: missing frontmatter key `{key}`")
+
+    for rel in ("LICENSE", "README.md", "AGENTS.md", "_config.yml", "Gemfile"):
+        extra = root / rel
+        if extra.is_file():
+            leftover_tokens(rel, extra.read_text(encoding="utf-8"), errors)
 
     return errors
 
