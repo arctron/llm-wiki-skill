@@ -31,3 +31,11 @@ You can run init from this clone. The wiki path must be outside this git root; i
 Work in the agent (search, read repos, run commands). When the result is settled, ask to record the conclusion and/or runbook. The skill proposes a diff; you approve; it lints, commits, and pushes.
 
 The first GitHub Actions run may wait for you to approve the `github-pages` environment on the wiki repo.
+
+## Published site search
+
+Each wiki’s GitHub Pages site uses [Just the Docs](https://just-the-docs.com/docs/search/) search: Jekyll writes a JSON corpus at build time; **lunr.js builds the index in the visitor’s browser** on every page load. There is no search server (GitHub Pages only serves files).
+
+Keep that default. Move index construction into CI (prebuilt lunr index or [Pagefind](https://pagefind.app/)) only when a real wiki is slow: search JSON in the megabyte range, or the tab hitching for a second or more on every visit.
+
+The agent does not use this index. It reads `docs/catalog.md` and the markdown files.
