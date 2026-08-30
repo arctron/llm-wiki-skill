@@ -18,7 +18,10 @@ REQUIRED_WIKI_KEYS = (
 REQUIRED_PAGE_KEYS = ("title", "layout", "nav_order")
 RAW_MAX_BYTES = 64_000
 WIKILINK_RE = re.compile(r"\[\[[^\]]+\]\]")
-TOKEN_RE = re.compile(r"__[A-Z][A-Z0-9_]*__")
+TOKEN_RE = re.compile(
+    r"__(?:TOPIC|SLUG|GITHUB_OWNER|GITHUB_REPO|PAGES_URL|YEAR|DATE|COPYRIGHT_HOLDER)__"
+)
+FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
 MD_LINK_RE = re.compile(r"\[(?:[^\]]*)\]\(([^)]+)\)")
 FM_RE = re.compile(r"\A---\n(.*?)\n---\n?", re.DOTALL)
 PIN_PAGE_RE = re.compile(r"^-\s*page:\s*(\S+)\s*$", re.MULTILINE)
@@ -97,7 +100,10 @@ def catalog_targets(root: Path, catalog_text: str) -> Set[Path]:
     return found
 
 
-def leftover_tokens(rel: str, text: str, errors: List[str]) -> None:
+def leftover_tokens(rel, text, errors, strip_fences=False):
+    # type: (str, str, List[str], bool) -> None
+    if strip_fences:
+        text = FENCE_RE.sub("", text)
     for match in TOKEN_RE.finditer(text):
         errors.append("{0}: leftover init token `{1}`".format(rel, match.group(0)))
 
@@ -157,7 +163,7 @@ def lint(root: Path) -> List[str]:
     for path in pages:
         rel = rel_docs(root, path).as_posix()
         text = path.read_text(encoding="utf-8")
-        leftover_tokens(rel, text, errors)
+        leftover_tokens(rel, text, errors, strip_fences=True)
         fm = parse_frontmatter(text)
         if fm is None:
             errors.append(f"{rel}: missing YAML frontmatter")
@@ -231,7 +237,6 @@ def lint(root: Path) -> List[str]:
             if size > RAW_MAX_BYTES:
                 errors.append(f"{rel}: {size} bytes exceeds {RAW_MAX_BYTES} (full scrape?)")
             raw_text = path.read_text(encoding="utf-8")
-            leftover_tokens(rel, raw_text, errors)
             raw_fm = parse_frontmatter(raw_text)
             if raw_fm is None:
                 errors.append(f"{rel}: missing YAML frontmatter")

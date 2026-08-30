@@ -32,7 +32,7 @@ A wiki root is the directory that contains `WIKI.md`.
 ## Hard rules
 
 1. Capture only when the user asks to record, file, or save. Never auto-file a session.
-2. File the settled conclusion and the working procedure. Do not file the transcript or every failed attempt. Dead ends go in a short **Discarded** section only when they stop someone repeating the same mistake.
+2. File the settled conclusion and/or the working procedure, not the transcript or every failed attempt. Dead ends go in a short **Discarded** section only when they stop someone repeating the same mistake.
 3. Scrub secrets before any write: API keys, tokens, passwords, private keys, cookies, `Authorization` headers, connection strings with credentials. Replace machine home paths with `~` or `$HOME`. If unsure, ask.
 4. `raw/` is append-only third-party excerpts (schema). Never edit or delete an existing raw file. No full pages, PDFs, binaries, or chat dumps.
 5. Links and page YAML follow the schema. Never `[[wikilinks]]`.
@@ -91,7 +91,7 @@ Primary operation. Distill **this session** (and tool output already in context)
 2. Distill. Do not copy the chat. One conclusion page and/or one runbook per capture unless the user named more than one topic.
 3. Scrub secrets (hard rule 3).
 4. Choose unique slugs (catalog + existing `docs/conclusions/` and `docs/runbooks/`). Prefer updating a catalog match.
-5. Write pages per schema. External URLs may be markdown links; do not ingest a URL unless the user asked to snapshot it.
+5. Write pages per schema. External URLs may be markdown links. Do not ingest a URL unless the user asked to keep excerpts of it in `raw/`.
 6. Wrap any `{{` or `{%` in fenced code with `{% raw %}` / `{% endraw %}` (schema).
 7. Re-read `docs/meta/pins.md`. Drop or rewrite no pinned claim. If new work conflicts with a pin, omit that hunk and ask.
 8. Update `docs/catalog.md`, `docs/index.md` if the overview should mention this, and prepend a `docs/meta/log.md` entry (`capture`).
@@ -99,9 +99,9 @@ Primary operation. Distill **this session** (and tool output already in context)
 
 ## ingest
 
-Optional. One picked URL (docs, repo, article) the user wants snapshotted.
+Optional. One URL the user named to keep as local excerpts in `raw/sources/` plus a short `docs/sources/` page. Live links on conclusion/runbook pages do not need this. If they want a reading list first, search and list URLs; ingest only the ones they pick, one per apply cycle.
 
-1. If `raw/sources/` already has this URL: say so. Only continue if the user wants a refresh (new raw **file** with a distinct slug suffix such as `-2026-08-30`; never overwrite the old snapshot).
+1. If `raw/sources/` already has this URL: say so. Only continue if the user wants a refresh (new raw **file** with a distinct slug suffix such as `-2026-08-30`; never overwrite the old raw file).
 2. Fetch. For PDFs, extract text with whatever the harness provides. Do not add the PDF to git.
 3. Choose a unique slug.
 4. Write `raw/sources/<slug>.md` and `docs/sources/<slug>.md` per schema.
@@ -142,7 +142,3 @@ When the user corrects a conclusion or runbook:
 ## rename
 
 `git mv` the page. Update every relative link, `docs/catalog.md`, `parent`/`title` references, aliases, and pins. Apply gate, then Apply.
-
-## propose-sources
-
-Optional reading list. Do not write wiki pages. Search, skip URLs already in `raw/sources/` and `docs/sources/`, present a numbered table (`# | slug | title | url | date | type | why`), wait for picks, then **ingest** one pick per apply cycle if they want snapshots.

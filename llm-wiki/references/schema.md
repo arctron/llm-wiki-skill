@@ -17,7 +17,7 @@ docs/index.md           overview
 docs/catalog.md         list of every wiki page
 docs/conclusions/<slug>.md
 docs/runbooks/<slug>.md
-docs/sources/<slug>.md  optional URL snapshots
+docs/sources/<slug>.md  optional URL excerpts
 docs/meta/log.md
 docs/meta/pins.md
 ```
@@ -70,7 +70,7 @@ Also set:
 | Any | `last_modified_date: YYYY-MM-DD` on each edit |
 | Any | `status: active` \| `disputed` \| `stub` (default `active`) |
 | Any | `aliases: []` other names checked before creating a page |
-| Conclusion or runbook | `sources: [<slug>, ...]` only when a `docs/sources/` page exists for a cited snapshot |
+| Conclusion or runbook | `sources: [<slug>, ...]` only when a `docs/sources/` page exists for a cited URL |
 
 Do not set `pinned: true` on a page; pins live in `docs/meta/pins.md`.
 
@@ -79,11 +79,11 @@ Do not set `pinned: true` on a page; pins live in `docs/meta/pins.md`.
 ## Provenance
 
 - Capture date: `captured` in frontmatter.
-- Cited URLs: markdown links in the body. Snapshot into `raw/` + `docs/sources/` only when the user asks to ingest.
+- Cited URLs: markdown links in the body. Write excerpts into `raw/` + `docs/sources/` only when the user asks to ingest.
 - Volatile facts (versions, current SOTA, “works on my machine”): `*As of YYYY-MM-DD.*` in that section.
 - Never invent a source slug. Never dump a session transcript into `raw/`.
 
-## Raw snapshot `raw/sources/<slug>.md`
+## Raw excerpts `raw/sources/<slug>.md`
 
 Only for ingested third-party URLs.
 

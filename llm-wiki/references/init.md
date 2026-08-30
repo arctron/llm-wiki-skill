@@ -213,7 +213,7 @@ None yet.
 - [Catalog](catalog.md) — every page
 - [Conclusions](conclusions/index.md) — settled research
 - [Runbooks](runbooks/index.md) — working procedures and commands
-- [Sources](sources/index.md) — optional URL snapshots
+- [Sources](sources/index.md) — optional URL excerpts
 - [Log](meta/log.md)
 ```
 
@@ -243,7 +243,7 @@ last_modified_date: __DATE__
 
 ## Sources
 
-- [Sources](sources/index.md) — optional URL snapshots
+- [Sources](sources/index.md) — optional URL excerpts
 
 ## Meta
 
@@ -297,7 +297,7 @@ last_modified_date: __DATE__
 
 # Sources
 
-Optional snapshots of URLs the user asked to keep. Full third-party text is not stored; excerpts live in `raw/sources/` in the git repo, not on this site.
+Optional excerpts of URLs the user asked to keep. Full third-party text is not stored; excerpts live in `raw/sources/` in the git repo, not on this site.
 ```
 
 ## `docs/meta/index.md`
