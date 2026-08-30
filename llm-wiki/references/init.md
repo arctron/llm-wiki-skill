@@ -26,7 +26,7 @@ Scope of this wiki goes here. One paragraph: what is in, what is out.
 ```markdown
 This repository is an LLM wiki instance.
 
-Before ingesting, querying, linting, or editing `docs/` or `raw/`, load the `llm-wiki` skill (`llm-wiki/SKILL.md`).
+Before capturing conclusions or runbooks, ingesting, querying, linting, or editing `docs/` or `raw/`, load the `llm-wiki` skill (`llm-wiki/SKILL.md`).
 
 If the skill is not installed, clone https://github.com/arctron/llm-wiki-skill and copy the `llm-wiki/` directory into your agent's skills folder. Install paths are in that repository's README.
 
@@ -38,11 +38,9 @@ Instance config: `WIKI.md`.
 ```markdown
 # __TOPIC__
 
-LLM-maintained wiki. Read it on GitHub Pages: <__PAGES_URL__>
+LLM-maintained wiki of research conclusions and runbooks. Read it on GitHub Pages: <__PAGES_URL__>
 
-Sources are curated one at a time. Wiki pages live in `docs/`. Immutable source snapshots (excerpts only) live in `raw/`.
-
-Maintained with the [llm-wiki](https://github.com/arctron/llm-wiki-skill) skill. If you use an agent, see `AGENTS.md`.
+Pages are `docs/`. Optional third-party excerpts are `raw/`. Maintained with the [llm-wiki](https://github.com/arctron/llm-wiki-skill) skill. If you use an agent, see `AGENTS.md`.
 ```
 
 ## `LICENSE`
@@ -90,7 +88,7 @@ gem "jekyll-relative-links"
 
 ```yaml
 title: __TOPIC__
-description: __TOPIC__ — an LLM-maintained wiki
+description: __TOPIC__ — conclusions and runbooks
 theme: just-the-docs
 source: docs
 
@@ -200,11 +198,11 @@ status: stub
 
 ## Scope
 
-See [WIKI.md](https://github.com/__GITHUB_OWNER__/__GITHUB_REPO__/blob/main/WIKI.md) for the instance scope. This page is the evolving public thesis.
+See [WIKI.md](https://github.com/__GITHUB_OWNER__/__GITHUB_REPO__/blob/main/WIKI.md) for the instance scope. This page is the evolving public overview.
 
-## Current thesis
+## Current conclusions
 
-Not yet. Ingest sources first.
+None yet. Capture research from an agent session.
 
 ## Open questions
 
@@ -213,10 +211,9 @@ None yet.
 ## How this wiki is organized
 
 - [Catalog](catalog.md) — every page
-- [Sources](sources/index.md) — one page per ingested source
-- [Concepts](concepts/index.md)
-- [Entities](entities/index.md)
-- [Analyses](analyses/index.md) — filed answers
+- [Conclusions](conclusions/index.md) — settled research
+- [Runbooks](runbooks/index.md) — working procedures and commands
+- [Sources](sources/index.md) — optional URL snapshots
 - [Log](meta/log.md)
 ```
 
@@ -234,29 +231,57 @@ last_modified_date: __DATE__
 
 ## Overview
 
-- [Home](index.md) — evolving thesis
+- [Home](index.md) — evolving overview
+
+## Conclusions
+
+- [Conclusions](conclusions/index.md) — settled research
+
+## Runbooks
+
+- [Runbooks](runbooks/index.md) — working procedures and commands
 
 ## Sources
 
-- [Sources](sources/index.md) — ingested source summaries
-
-## Concepts
-
-- [Concepts](concepts/index.md) — ideas compiled across sources
-
-## Entities
-
-- [Entities](entities/index.md) — people, orgs, products, places
-
-## Analyses
-
-- [Analyses](analyses/index.md) — filed query answers
+- [Sources](sources/index.md) — optional URL snapshots
 
 ## Meta
 
 - [Meta](meta/index.md) — log and pins
 - [Log](meta/log.md) — operations
-- [Pins](meta/pins.md) — human corrections that must survive ingest
+- [Pins](meta/pins.md) — corrections that must survive later captures
+```
+
+## `docs/conclusions/index.md`
+
+```markdown
+---
+title: Conclusions
+layout: default
+nav_order: 3
+has_children: true
+last_modified_date: __DATE__
+---
+
+# Conclusions
+
+Settled research from agent sessions. Child pages appear in the sidebar as they are captured.
+```
+
+## `docs/runbooks/index.md`
+
+```markdown
+---
+title: Runbooks
+layout: default
+nav_order: 4
+has_children: true
+last_modified_date: __DATE__
+---
+
+# Runbooks
+
+Working procedures and commands. Child pages appear in the sidebar as they are captured.
 ```
 
 ## `docs/sources/index.md`
@@ -265,62 +290,14 @@ last_modified_date: __DATE__
 ---
 title: Sources
 layout: default
-nav_order: 3
+nav_order: 5
 has_children: true
 last_modified_date: __DATE__
 ---
 
 # Sources
 
-One summary page per ingested source. Full third-party text is not stored; excerpts live in `raw/sources/` in the git repo, not on this site.
-```
-
-## `docs/concepts/index.md`
-
-```markdown
----
-title: Concepts
-layout: default
-nav_order: 4
-has_children: true
-last_modified_date: __DATE__
----
-
-# Concepts
-
-Ideas compiled across sources. Child pages appear in the sidebar as they are created.
-```
-
-## `docs/entities/index.md`
-
-```markdown
----
-title: Entities
-layout: default
-nav_order: 5
-has_children: true
-last_modified_date: __DATE__
----
-
-# Entities
-
-People, organizations, products, and places. Child pages appear in the sidebar as they are created.
-```
-
-## `docs/analyses/index.md`
-
-```markdown
----
-title: Analyses
-layout: default
-nav_order: 6
-has_children: true
-last_modified_date: __DATE__
----
-
-# Analyses
-
-Filed answers to questions asked against this wiki. Child pages appear in the sidebar as they are created.
+Optional snapshots of URLs the user asked to keep. Full third-party text is not stored; excerpts live in `raw/sources/` in the git repo, not on this site.
 ```
 
 ## `docs/meta/index.md`
@@ -329,14 +306,14 @@ Filed answers to questions asked against this wiki. Child pages appear in the si
 ---
 title: Meta
 layout: default
-nav_order: 7
+nav_order: 6
 has_children: true
 last_modified_date: __DATE__
 ---
 
 # Meta
 
-Operation log and pins. Pins are human (or previously approved) corrections that later ingests must not clobber.
+Operation log and pins. Pins are human (or previously approved) corrections that later captures must not clobber.
 ```
 
 ## `docs/meta/log.md`

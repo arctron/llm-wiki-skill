@@ -1,8 +1,8 @@
 # llm-wiki-skill
 
-Bare [Agent Skill](https://agentskills.io) for **init and maintain** of topic wikis. This repo is not a wiki. Each wiki is a separate GitHub repo the skill creates.
+Bare [Agent Skill](https://agentskills.io) that files **final research conclusions and runbooks** from AI-agent work into a GitHub Pages wiki. This repo is not a wiki. Each wiki is a separate GitHub repo the skill creates.
 
-License: [0BSD](LICENSE). Pattern: [Karpathy, LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
+License: [0BSD](LICENSE). Pattern: [Karpathy, LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f), specialized for session capture rather than source-ingest encyclopedias.
 
 ## Install
 
@@ -26,6 +26,8 @@ Needs `git`, `python3` (stdlib only), and `gh` (logged in) to create/push wiki r
 
 ## Use
 
-You can run init from this clone. The wiki path must be outside this git root; if you do not pass a path, the skill uses a sibling of this clone named `wiki-<slug>`. Then ingest, query, lint, and pin against that wiki repo.
+You can run init from this clone. The wiki path must be outside this git root; if you do not pass a path, the skill uses a sibling of this clone named `wiki-<slug>`.
+
+Work in the agent (search, read repos, run commands). When the result is settled, ask to record the conclusion and/or runbook. The skill proposes a diff; you approve; it lints, commits, and pushes.
 
 The first GitHub Actions run may wait for you to approve the `github-pages` environment on the wiki repo.

@@ -24,12 +24,12 @@ FM_RE = re.compile(r"\A---\n(.*?)\n---\n?", re.DOTALL)
 PIN_PAGE_RE = re.compile(r"^-\s*page:\s*(\S+)\s*$", re.MULTILINE)
 
 SECTION_PARENTS = {
+    Path("docs/conclusions/index.md"): "Conclusions",
+    Path("docs/runbooks/index.md"): "Runbooks",
     Path("docs/sources/index.md"): "Sources",
-    Path("docs/concepts/index.md"): "Concepts",
-    Path("docs/entities/index.md"): "Entities",
-    Path("docs/analyses/index.md"): "Analyses",
     Path("docs/meta/index.md"): "Meta",
 }
+RAW_BLOCK_RE = re.compile(r"\{%\s*raw\s*%\}.*?\{%\s*endraw\s*%\}", re.DOTALL)
 
 
 def find_wiki_root(start: Path) -> Optional[Path]:
@@ -131,10 +131,9 @@ def lint(root: Path) -> List[str]:
         "AGENTS.md",
         "docs/index.md",
         "docs/catalog.md",
+        "docs/conclusions/index.md",
+        "docs/runbooks/index.md",
         "docs/sources/index.md",
-        "docs/concepts/index.md",
-        "docs/entities/index.md",
-        "docs/analyses/index.md",
         "docs/meta/index.md",
         "docs/meta/log.md",
         "docs/meta/pins.md",
@@ -180,8 +179,13 @@ def lint(root: Path) -> List[str]:
         body = body_of(text)
         if WIKILINK_RE.search(text):
             errors.append(f"{rel}: contains [[wikilink]]; use relative .md links")
-        if re.search(r"\{[:%]", body):
-            errors.append(f"{rel}: contains Jekyll '{{:' or '{{%' in body")
+        unraw = RAW_BLOCK_RE.sub("", body)
+        if re.search(r"\{:", unraw):
+            errors.append("{0}: contains kramdown IAL `{{:`".format(rel))
+        if re.search(r"\{\{", unraw) or re.search(r"\{%", unraw):
+            errors.append(
+                "{0}: unescaped `{{{{` or `{{%`; wrap the fence in {{% raw %}}".format(rel)
+            )
 
         for raw in MD_LINK_RE.findall(text):
             href = raw.strip()

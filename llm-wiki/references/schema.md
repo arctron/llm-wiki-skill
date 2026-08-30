@@ -12,20 +12,17 @@ LICENSE
 Gemfile
 _config.yml             Jekyll; `source: docs` so `raw/` is not in the site
 .github/workflows/pages.yml
-raw/sources/<slug>.md   immutable snapshots (not published)
-docs/index.md           overview / evolving thesis (Pages home)
+raw/sources/<slug>.md   optional third-party excerpts (not published)
+docs/index.md           overview
 docs/catalog.md         list of every wiki page
-docs/sources/index.md   section parent
-docs/sources/<slug>.md  one page per ingested source
-docs/concepts/...
-docs/entities/...
-docs/analyses/...
-docs/meta/index.md
+docs/conclusions/<slug>.md
+docs/runbooks/<slug>.md
+docs/sources/<slug>.md  optional URL snapshots
 docs/meta/log.md
 docs/meta/pins.md
 ```
 
-`raw/` is not part of the site. Do not put wiki prose there.
+`raw/` is not part of the site. Do not put wiki prose or chat logs there.
 
 Empty-wiki file contents for a new repo are in [init.md](init.md).
 
@@ -42,16 +39,16 @@ source_policy: excerpts-only
 volatile_days: 90
 ```
 
-Optional `source_quality` list, highest first, e.g. `peer-reviewed`, `primary data`, `books`, `specialist reporting`, `blogs/social`.
-
 ## Links
 
-- Between wiki pages: `[Title](../concepts/foo.md)` (relative, include `.md`).
+- Between wiki pages: `[Title](../runbooks/foo.md)` (relative, include `.md`).
 - Anchors allowed: `foo.md#heading`.
-- External URLs allowed on source pages and in `raw/`.
-- No `[[wikilinks]]`, no leading-`/` site paths, no `{:` / `{%` in page bodies.
+- External URLs allowed.
+- No `[[wikilinks]]`, no leading-`/` site paths, no `{:` kramdown IAL.
 
-`parent` in frontmatter must equal the parent page's `title` exactly (`Sources`, `Concepts`, `Entities`, `Analyses`, `Meta`).
+`parent` in frontmatter must equal the parent page's `title` exactly (`Conclusions`, `Runbooks`, `Sources`, `Meta`).
+
+Jekyll interprets `{{` and `{%` even inside fenced code. If a page needs those characters, wrap that fence (or the smallest block) in `{% raw %}` / `{% endraw %}`. That pair is the only Liquid allowed in page bodies.
 
 ## Wiki page frontmatter
 
@@ -69,25 +66,26 @@ Also set:
 | --- | --- |
 | Section parent (`docs/<section>/index.md`) | `has_children: true` |
 | Child page | `parent: <section title>` |
-| Source / concept / entity / analysis | `sources: [<slug>, ...]` (source slugs; empty only on stubs and section parents) |
+| Conclusion / runbook / source | `captured: YYYY-MM-DD` on create or update |
 | Any | `last_modified_date: YYYY-MM-DD` on each edit |
 | Any | `status: active` \| `disputed` \| `stub` (default `active`) |
 | Any | `aliases: []` other names checked before creating a page |
+| Conclusion or runbook | `sources: [<slug>, ...]` only when a `docs/sources/` page exists for a cited snapshot |
 
 Do not set `pinned: true` on a page; pins live in `docs/meta/pins.md`.
 
-`nav_order` for section parents: Home `1`, Catalog `2`, Sources `3`, Concepts `4`, Entities `5`, Analyses `6`, Meta `7`. Children: 10, 20, 30, …
+`nav_order` for section parents: Home `1`, Catalog `2`, Conclusions `3`, Runbooks `4`, Sources `5`, Meta `6`. Children: 10, 20, 30, …
 
 ## Provenance
 
-- Page-level: `sources` in frontmatter.
-- Section-level: every `##` section that states facts ends with `*Sources: [Title](../sources/<slug>.md)*` (one or more links). Synthesis that does not add facts still lists the pages it drew from.
-- Load-bearing or disputed claims: short quoted excerpt plus the source link, in the body.
-- Volatile facts (current SOTA, prices, versions, "as of now"): include `*As of YYYY-MM-DD.*` in that section.
-
-Never invent a source slug. If the raw snapshot has no excerpt for a claim, do not present the claim as sourced.
+- Capture date: `captured` in frontmatter.
+- Cited URLs: markdown links in the body. Snapshot into `raw/` + `docs/sources/` only when the user asks to ingest.
+- Volatile facts (versions, current SOTA, “works on my machine”): `*As of YYYY-MM-DD.*` in that section.
+- Never invent a source slug. Never dump a session transcript into `raw/`.
 
 ## Raw snapshot `raw/sources/<slug>.md`
+
+Only for ingested third-party URLs.
 
 ```yaml
 ---
@@ -99,36 +97,39 @@ content_type: html | pdf | text | other
 ---
 ```
 
-Body: `# <title>`, then `## Excerpts` with blockquotes only, then optional `## Retrieval notes` (paywall, language, fetch errors).
+Body: `# <title>`, then `## Excerpts` with blockquotes only, then optional `## Retrieval notes`.
 
-Quoted text in one raw file must stay under 1500 words. Prefer the sentences that support claims you will file. No full-page paste, no PDF binaries.
+Quoted text in one raw file must stay under 1500 words. No full-page paste, no PDF binaries, no chat logs.
 
 ## Page bodies
 
 Use these `##` headings. Skip a heading only if it would be empty; keep the order.
 
-**`docs/index.md`:** `# <topic>` then `## Scope`, `## Current thesis`, `## Open questions`, `## How this wiki is organized`.
+**`docs/index.md`:** `# <topic>` then `## Scope`, `## Current conclusions`, `## Open questions`, `## How this wiki is organized`.
 
-**`docs/sources/<slug>.md`:** `# <title>` then `## Summary`, `## Key claims`, `## Caveats`, `## See also`. Frontmatter `url` and `retrieved` plus `sources: [<slug>]`.
+**`docs/conclusions/<slug>.md`:** `# <title>` then `## Conclusion`, `## Why`, `## Open questions`, `## See also`.
 
-**`docs/concepts/<slug>.md` and `docs/entities/<slug>.md`:** `# <title>` then `## Summary`, `## What we know`, `## Disputed`, `## Open questions`, `## See also`.
+**`docs/runbooks/<slug>.md`:** `# <title>` then `## Goal`, `## Environment`, `## Procedure`, `## Verification`, `## Discarded`, `## See also`.
 
-**`docs/analyses/<slug>.md`:** `# <question>` then `## Answer`, `## Sources used`, `## What would change this`.
+- **Environment:** OS, tool versions, `*As of YYYY-MM-DD.*`
+- **Procedure:** working commands in fenced blocks, in order.
+- **Verification:** how we knew it worked.
+- **Discarded:** brief dead ends only.
 
-**Disputed** (section or in-body): state both sides, each with a source link. Do not pick a winner unless the user does.
+**`docs/sources/<slug>.md`:** `# <title>` then `## Summary`, `## Key claims`, `## Caveats`, `## See also`. Frontmatter `url` and `retrieved`.
 
-Section parents (`docs/<section>/index.md`) are one short paragraph plus children in the sidebar. Catalog is the full list.
+Section parents are one short paragraph plus children in the sidebar. Catalog is the full list.
 
 ## Catalog `docs/catalog.md`
 
 Every file under `docs/**/*.md` except `catalog.md` itself must appear as a markdown link whose target resolves to that file. Group by section:
 
 ```markdown
-## Sources
-- [Smith 2024](sources/smith-2024.md) — one-line summary
+## Runbooks
+- [Install Postgres](runbooks/install-postgres.md) — one-line summary
 ```
 
-One-line summaries are optional but preferred. Update on every ingest, file, rename, or new page.
+Update on every capture, ingest, rename, or new page.
 
 ## Log `docs/meta/log.md`
 
@@ -136,27 +137,27 @@ Append-only, newest first. Every operation is one heading:
 
 `## [YYYY-MM-DD] <op> | <slug-or-short-title>`
 
-`<op>` is `init` | `ingest` | `query` | `lint` | `pin` | `rename`. Body: a few lines of what changed.
+`<op>` is `init` | `capture` | `ingest` | `lint` | `pin` | `rename`. Body: a few lines of what changed.
 
 ## Pins `docs/meta/pins.md`
 
 ```markdown
 ## pin-001
-- page: concepts/foo.md
-- section: "## What we know"
+- page: runbooks/install-postgres.md
+- section: "## Procedure"
 - kind: correction
-- claim: "<the sentence that must remain true>"
+- claim: "<the sentence or command that must remain true>"
 - created: YYYY-MM-DD
 - status: active
 ```
 
 `kind`: `correction` (claim must remain true), `addition` (fact must remain present), `freeze` (do not rewrite the section). `page` is relative to `docs/`. `status`: `active` | `retired`. Never delete a pin; set `retired` if the user withdraws it.
 
-On ingest, if new evidence contradicts an `active` pin: do not change that claim; ask.
+On capture or ingest, if new work contradicts an `active` pin: do not change that claim; ask.
 
 ## Slugs
 
-`[a-z0-9]+(-[a-z0-9]+)*`. Unique across `docs/sources/`, `docs/concepts/`, `docs/entities/`, `docs/analyses/`, and `raw/sources/`. Source slugs may match their source page; do not reuse a source slug for a concept.
+`[a-z0-9]+(-[a-z0-9]+)*`. Unique across `docs/conclusions/`, `docs/runbooks/`, `docs/sources/`, and `raw/sources/`.
 
 ## What not to create
 
