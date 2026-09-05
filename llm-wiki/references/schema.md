@@ -11,7 +11,7 @@ README.md               human landing for GitHub
 LICENSE
 Gemfile
 _config.yml             Jekyll; `source: docs` so `raw/` is not in the site
-.github/workflows/pages.yml
+.github/workflows/pages.yml   only when `site` is `github-pages`
 raw/sources/<slug>.md   optional third-party excerpts (not published)
 docs/index.md           overview
 docs/catalog.md         list of every wiki page
@@ -34,10 +34,13 @@ YAML frontmatter plus a short markdown body (scope, what is in/out). Required fr
 topic: <title>
 slug: <slug>
 github: <owner>/<repo>
+site: github-pages | local | none
 pages_url: https://<owner>.github.io/<repo>/
 source_policy: excerpts-only
 volatile_days: 90
 ```
+
+`site`: `github-pages` (hosted Actions site), `local` (`bundle exec jekyll serve`), or `none` (markdown only). `pages_url` is required when `site` is `github-pages`; otherwise omit it or leave it empty. GitHub Pages HTML is public to anyone with the URL; a private repo does not make Pages private.
 
 ## Links
 

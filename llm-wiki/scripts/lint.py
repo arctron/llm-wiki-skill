@@ -11,15 +11,16 @@ REQUIRED_WIKI_KEYS = (
     "topic",
     "slug",
     "github",
-    "pages_url",
+    "site",
     "source_policy",
     "volatile_days",
 )
+VALID_SITES = ("github-pages", "local", "none")
 REQUIRED_PAGE_KEYS = ("title", "layout", "nav_order")
 RAW_MAX_BYTES = 64_000
 WIKILINK_RE = re.compile(r"\[\[[^\]]+\]\]")
 TOKEN_RE = re.compile(
-    r"__(?:TOPIC|SLUG|GITHUB_OWNER|GITHUB_REPO|PAGES_URL|YEAR|DATE|COPYRIGHT_HOLDER)__"
+    r"__(?:TOPIC|SLUG|GITHUB_OWNER|GITHUB_REPO|SITE|PAGES_URL|YEAR|DATE|COPYRIGHT_HOLDER)__"
 )
 FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
 MD_LINK_RE = re.compile(r"\[(?:[^\]]*)\]\(([^)]+)\)")
@@ -132,6 +133,11 @@ def lint(root: Path) -> List[str]:
                 errors.append(f"WIKI.md: missing frontmatter key `{key}`")
         if wiki_fm.get("source_policy") and wiki_fm["source_policy"] != "excerpts-only":
             errors.append("WIKI.md: source_policy must be `excerpts-only`")
+        site = wiki_fm.get("site") or ""
+        if site and site not in VALID_SITES:
+            errors.append("WIKI.md: site must be `github-pages`, `local`, or `none`")
+        if site == "github-pages" and not wiki_fm.get("pages_url"):
+            errors.append("WIKI.md: pages_url required when site is `github-pages`")
 
     required_files = [
         "AGENTS.md",
@@ -145,9 +151,10 @@ def lint(root: Path) -> List[str]:
         "docs/meta/pins.md",
         "_config.yml",
         "Gemfile",
-        ".github/workflows/pages.yml",
         "raw/sources/.gitkeep",
     ]
+    if wiki_fm and wiki_fm.get("site") == "github-pages":
+        required_files.append(".github/workflows/pages.yml")
     for rel in required_files:
         if not (root / rel).is_file():
             errors.append(f"{rel}: missing")

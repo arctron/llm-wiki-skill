@@ -1,6 +1,6 @@
 # Init files
 
-Write these paths under `$WIKI_ROOT`. Replace `__TOPIC__` `__SLUG__` `__GITHUB_OWNER__` `__GITHUB_REPO__` `__PAGES_URL__` `__YEAR__` `__DATE__` `__COPYRIGHT_HOLDER__` in every file.
+Write these paths under `$WIKI_ROOT`. Replace `__TOPIC__` `__SLUG__` `__GITHUB_OWNER__` `__GITHUB_REPO__` `__SITE__` `__PAGES_URL__` `__YEAR__` `__DATE__` `__COPYRIGHT_HOLDER__` in every file. If `__SITE__` is not `github-pages`, delete `.github/workflows/pages.yml` after writing so Actions does not fail.
 
 Wiki page bodies and later edits follow [schema.md](schema.md), not this file.
 
@@ -11,6 +11,7 @@ Wiki page bodies and later edits follow [schema.md](schema.md), not this file.
 topic: __TOPIC__
 slug: __SLUG__
 github: __GITHUB_OWNER__/__GITHUB_REPO__
+site: __SITE__
 pages_url: __PAGES_URL__
 source_policy: excerpts-only
 volatile_days: 90

@@ -2,12 +2,13 @@
 name: llm-wiki
 description: >
   Capture final research conclusions and runbooks (install steps, commands)
-  from AI-agent work into a GitHub Pages wiki. Use when the user wants to
-  start a wiki, record conclusions or a runbook from this session, ingest a
-  URL, query the wiki, lint it, or pin a correction. Triggers: /llm-wiki,
-  runbook, file this, record conclusions, install instructions, capture.
+  from AI-agent work into a markdown wiki (GitHub Pages or local Jekyll).
+  Use when the user wants to start a wiki, record conclusions or a runbook,
+  ingest a URL, query, lint, pin, or serve the wiki locally. Triggers:
+  /llm-wiki, runbook, file this, record conclusions, install instructions,
+  capture, jekyll serve.
 license: 0BSD
-compatibility: Requires git and python3. gh is required to create GitHub repos, enable Pages, and push.
+compatibility: Requires git and python3. gh is required to create/push GitHub repos. Ruby and Bundler are required only to serve the wiki locally.
 metadata:
   author: arctron
   version: "1.0"
@@ -65,21 +66,23 @@ From the wiki root:
 3. `git add` the approved files plus any lint fixes in those files and in `docs/catalog.md` / `docs/meta/log.md`.
 4. Commit with a message like `capture: postgres install on macos` or `ingest: smith-2024` or `pin: use bind mount`.
 5. `git pull --ff-only` then `git push`.
-6. Report the commit, Pages URL from `WIKI.md`, and which pages changed.
+6. Report the commit, which pages changed, and how to read the wiki: `pages_url` if `site` is `github-pages`; otherwise GitHub markdown and **serve**.
 
 ## init
 
 Scaffold a **new** GitHub repo. Do not capture or ingest in this operation.
 
-1. Collect: topic title; slug (lowercase hyphenated); GitHub owner (`gh api user --jq .login` if unset); local path; copyright holder (`git config user.name`); `__DATE__` = today `YYYY-MM-DD`; `__YEAR__` = four-digit year of `__DATE__`. Remaining tokens are the names in [references/init.md](references/init.md).
+1. Collect: topic title; slug (lowercase hyphenated); GitHub owner (`gh api user --jq .login` if unset); local path; copyright holder (`git config user.name`); visibility (`public` or `private` — ask if unset); `__DATE__` = today `YYYY-MM-DD`; `__YEAR__` = four-digit year of `__DATE__`. Remaining tokens are the names in [references/init.md](references/init.md).
    Default path when unset: `SKILL_GIT_ROOT=$(git -C "$SKILL_ROOT" rev-parse --show-toplevel)`, then `$WIKI_ROOT` = absolute `<SKILL_GIT_ROOT>/../wiki-<slug>` (sibling of the skill clone, independent of cwd). If that git command fails, ask for an absolute path.
    Resolve `$WIKI_ROOT` to an absolute path. Stop if it is `$SKILL_ROOT`, `$SKILL_GIT_ROOT`, or a subdirectory of either.
 2. If the path exists and is not empty: stop.
-3. Read [references/init.md](references/init.md). Write every listed file into `$WIKI_ROOT` with tokens replaced. Repo name defaults to `wiki-<slug>`. Pages URL is `https://<owner>.github.io/<repo>/`. Run the rest of init inside `$WIKI_ROOT`.
-4. Fill `WIKI.md` scope in one short paragraph. If you must guess the scope, ask instead.
-5. `git init -b main`, `git add -A`, commit: `init: wiki scaffold for <topic>`.
-6. `gh repo create <owner>/<repo> --public --source=. --remote=origin --push`. Enable Pages from Actions: `gh api --method POST "repos/<owner>/<repo>/pages" -f build_type=workflow`. If Pages already exists, continue.
-7. Stop. Tell the user they can research and run commands in later turns, then ask to record conclusions or a runbook.
+3. GitHub Pages is optional. Personal Free accounts cannot enable Pages on **private** repos. If Pages *is* enabled on a private repo, the built HTML is still **public** to anyone with the URL unless the org is GitHub Enterprise Cloud. Say this before enabling Pages. Never treat Pages as a private view of a private repo.
+4. Read [references/init.md](references/init.md). Write every listed file into `$WIKI_ROOT` with tokens replaced. Repo name defaults to `wiki-<slug>`. `__SITE__` is `github-pages` or `local`. `__PAGES_URL__` is `https://<owner>.github.io/<repo>/` or empty. Run the rest of init inside `$WIKI_ROOT`.
+5. Fill `WIKI.md` scope in one short paragraph. If you must guess the scope, ask instead.
+6. `git init -b main`, `git add -A`, commit: `init: wiki scaffold for <topic>`.
+7. `gh repo create <owner>/<repo> --public|--private --source=. --remote=origin --push` using the chosen visibility.
+8. Enable Pages only if the user wants a hosted site **and** the plan allows it (typically a **public** repo): `gh api --method POST "repos/<owner>/<repo>/pages" -f build_type=workflow`. If Pages already exists, continue. If GitHub returns that the plan does not support Pages, or Setup Pages fails: do not retry. Set `site: local` and empty `pages_url` in `WIKI.md`, **delete** `.github/workflows/pages.yml` so Actions does not fail on every push, commit, push, and tell the user to **serve** locally (or read `docs/` on GitHub).
+9. Stop. Tell the user they can research and run commands in later turns, then ask to record conclusions or a runbook. If `site` is `local`, also tell them they can ask to serve the wiki in the browser.
 
 If `gh` is missing or unauthenticated: leave the local repo committed and print the exact commands for the user.
 
@@ -142,3 +145,15 @@ When the user corrects a conclusion or runbook:
 ## rename
 
 `git mv` the page. Update every relative link, `docs/catalog.md`, `parent`/`title` references, aliases, and pins. Apply gate, then Apply.
+
+## serve
+
+Local Just the Docs preview (same site as Pages, no GitHub Pages). Use when `site` is `local`, Pages is unavailable, or the user wants to view the wiki in a browser on this machine.
+
+From the wiki root:
+
+1. Need `ruby` and `bundler`. If missing, say so and that they can still read `docs/` on GitHub or in an editor.
+2. `bundle install` then `bundle exec jekyll serve`.
+3. Open `http://127.0.0.1:4000/<repo>/` (`baseurl` is `/<repo>` from `_config.yml`).
+
+Do not commit `_site/`. This operation does not use the Apply gate.
