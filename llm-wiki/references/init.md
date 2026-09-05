@@ -1,6 +1,6 @@
 # Init files
 
-Write these paths under `$WIKI_ROOT`. Replace `__TOPIC__` `__SLUG__` `__GITHUB_OWNER__` `__GITHUB_REPO__` `__SITE__` `__PAGES_URL__` `__HOW_TO_READ__` `__YEAR__` `__DATE__` `__COPYRIGHT_HOLDER__` in every file.
+Write these paths under `$WIKI_ROOT`. Replace `__TOPIC__` `__SLUG__` `__GITHUB_OWNER__` `__GITHUB_REPO__` `__SITE__` `__PAGES_URL__` `__HOW_TO_READ__` `__COLOR_SCHEME__` `__YEAR__` `__DATE__` `__COPYRIGHT_HOLDER__` in every file.
 
 Delete `.github/workflows/pages.yml` after writing unless GitHub has already accepted Pages for this repo (`site` is `github-pages`). First push must not include that workflow.
 
@@ -105,7 +105,7 @@ baseurl: /__GITHUB_REPO__
 permalink: pretty
 heading_anchors: true
 search_enabled: true
-color_scheme: light
+color_scheme: __COLOR_SCHEME__
 
 aux_links:
   GitHub:

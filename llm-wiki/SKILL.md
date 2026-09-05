@@ -74,7 +74,7 @@ From the wiki root:
 
 Scaffold a **new** GitHub repo. Do not capture or ingest in this operation.
 
-1. Collect: topic title; slug (lowercase hyphenated); GitHub owner (`gh api user --jq .login` if unset); local path; copyright holder (`git config user.name`); visibility (`public` or `private` — ask if unset); `__DATE__` = today `YYYY-MM-DD`; `__YEAR__` = four-digit year of `__DATE__`. Remaining tokens are the names in [references/init.md](references/init.md).
+1. Collect: topic title; slug (lowercase hyphenated); GitHub owner (`gh api user --jq .login` if unset); local path; copyright holder (`git config user.name`); visibility (`public` or `private` — ask if unset); color scheme (`light` or `dark` — ask; default `light`); `__DATE__` = today `YYYY-MM-DD`; `__YEAR__` = four-digit year of `__DATE__`. Remaining tokens are the names in [references/init.md](references/init.md). `__COLOR_SCHEME__` is `light` or `dark`.
    Default path when unset: `SKILL_GIT_ROOT=$(git -C "$SKILL_ROOT" rev-parse --show-toplevel)`, then `$WIKI_ROOT` = absolute `<SKILL_GIT_ROOT>/../wiki-<slug>` (sibling of the skill clone, independent of cwd). If that git command fails, ask for an absolute path.
    Resolve `$WIKI_ROOT` to an absolute path. Stop if it is `$SKILL_ROOT`, `$SKILL_GIT_ROOT`, or a subdirectory of either.
 2. If the path exists and is not empty: stop.

@@ -20,7 +20,7 @@ REQUIRED_PAGE_KEYS = ("title", "layout", "nav_order")
 RAW_MAX_BYTES = 64_000
 WIKILINK_RE = re.compile(r"\[\[[^\]]+\]\]")
 TOKEN_RE = re.compile(
-    r"__(?:TOPIC|SLUG|GITHUB_OWNER|GITHUB_REPO|SITE|PAGES_URL|HOW_TO_READ|YEAR|DATE|COPYRIGHT_HOLDER)__"
+    r"__(?:TOPIC|SLUG|GITHUB_OWNER|GITHUB_REPO|SITE|PAGES_URL|HOW_TO_READ|COLOR_SCHEME|YEAR|DATE|COPYRIGHT_HOLDER)__"
 )
 FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
 MD_LINK_RE = re.compile(r"\[(?:[^\]]*)\]\(([^)]+)\)")
