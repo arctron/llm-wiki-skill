@@ -29,6 +29,7 @@ A wiki root is the directory that contains `WIKI.md`.
 - If `WIKI.md` is missing and the user is not starting a wiki: stop and say so.
 - If several `WIKI.md` files could apply: ask which root to use.
 - After every `git` operation, treat that directory as the cwd for paths in this skill.
+- If hosting is broken (`site` missing, `.github/workflows/pages.yml` present while `site` is not `github-pages`, or Pages/Actions failed because the plan disallows it): set `site: local`, clear `pages_url`, delete the workflow, set README how-to-read to local (see [references/init.md](references/init.md) `__HOW_TO_READ__`), commit, push. Do not set `site: github-pages` only to satisfy lint.
 
 ## Hard rules
 
@@ -42,6 +43,7 @@ A wiki root is the directory that contains `WIKI.md`.
 8. Never contradict or drop an active pin. If new work conflicts with a pin, stop and ask.
 9. Do not add `CLAUDE.md`, `.cursorrules`, or other harness-specific instruction files. `AGENTS.md` is the only always-on pointer.
 10. Never write a wiki (`WIKI.md`, `docs/`, `raw/`) into `$SKILL_ROOT` or into the git repository that contains this `SKILL.md`. Wikis are always separate repos.
+11. GitHub Pages HTML is public to anyone with the URL. Never treat Pages as a private view of a private repo.
 
 ## Apply gate
 
@@ -66,7 +68,7 @@ From the wiki root:
 3. `git add` the approved files plus any lint fixes in those files and in `docs/catalog.md` / `docs/meta/log.md`.
 4. Commit with a message like `capture: postgres install on macos` or `ingest: smith-2024` or `pin: use bind mount`.
 5. `git pull --ff-only` then `git push`.
-6. Report the commit, which pages changed, and how to read the wiki: `pages_url` if `site` is `github-pages`; otherwise GitHub markdown and **serve**.
+6. Report the commit, which pages changed, and how to read the wiki. If `site` is `github-pages`, report `pages_url` and that the HTML is public. Otherwise GitHub markdown and **serve**.
 
 ## init
 
@@ -76,13 +78,13 @@ Scaffold a **new** GitHub repo. Do not capture or ingest in this operation.
    Default path when unset: `SKILL_GIT_ROOT=$(git -C "$SKILL_ROOT" rev-parse --show-toplevel)`, then `$WIKI_ROOT` = absolute `<SKILL_GIT_ROOT>/../wiki-<slug>` (sibling of the skill clone, independent of cwd). If that git command fails, ask for an absolute path.
    Resolve `$WIKI_ROOT` to an absolute path. Stop if it is `$SKILL_ROOT`, `$SKILL_GIT_ROOT`, or a subdirectory of either.
 2. If the path exists and is not empty: stop.
-3. GitHub Pages is optional. Personal Free accounts cannot enable Pages on **private** repos. If Pages *is* enabled on a private repo, the built HTML is still **public** to anyone with the URL unless the org is GitHub Enterprise Cloud. Say this before enabling Pages. Never treat Pages as a private view of a private repo.
-4. Read [references/init.md](references/init.md). Write every listed file into `$WIKI_ROOT` with tokens replaced. Repo name defaults to `wiki-<slug>`. `__SITE__` is `github-pages` or `local`. `__PAGES_URL__` is `https://<owner>.github.io/<repo>/` or empty. Run the rest of init inside `$WIKI_ROOT`.
+3. Hosted Pages only if visibility is **public** and the user wants a public HTML site (hard rule 11). Private, or public without a hosted site: `__SITE__` = `local`, `__PAGES_URL__` empty. Public hosted: still start as `local` with no workflow (next steps).
+4. Read [references/init.md](references/init.md). Write listed files into `$WIKI_ROOT` with tokens replaced. Repo name defaults to `wiki-<slug>`. Delete `.github/workflows/pages.yml` before any commit (init.md). Run the rest of init inside `$WIKI_ROOT`.
 5. Fill `WIKI.md` scope in one short paragraph. If you must guess the scope, ask instead.
 6. `git init -b main`, `git add -A`, commit: `init: wiki scaffold for <topic>`.
 7. `gh repo create <owner>/<repo> --public|--private --source=. --remote=origin --push` using the chosen visibility.
-8. Enable Pages only if the user wants a hosted site **and** the plan allows it (typically a **public** repo): `gh api --method POST "repos/<owner>/<repo>/pages" -f build_type=workflow`. If Pages already exists, continue. If GitHub returns that the plan does not support Pages, or Setup Pages fails: do not retry. Set `site: local` and empty `pages_url` in `WIKI.md`, **delete** `.github/workflows/pages.yml` so Actions does not fail on every push, commit, push, and tell the user to **serve** locally (or read `docs/` on GitHub).
-9. Stop. Tell the user they can research and run commands in later turns, then ask to record conclusions or a runbook. If `site` is `local`, also tell them they can ask to serve the wiki in the browser.
+8. If and only if step 3 chose a public hosted site: `gh api --method POST "repos/<owner>/<repo>/pages" -f build_type=workflow`. On success, restore `pages.yml` from init.md, set `site: github-pages` and `pages_url` to `https://<owner>.github.io/<repo>/`, set README `__HOW_TO_READ__` to the Pages URL, commit, push. If the API errors or Setup Pages fails: do not add the workflow; leave `site: local`; tell the user to **serve** or read `docs/` on GitHub.
+9. Stop. Tell the user they can research and run commands, then ask to record conclusions or a runbook. If `site` is `local`, they can also ask to serve the wiki in the browser.
 
 If `gh` is missing or unauthenticated: leave the local repo committed and print the exact commands for the user.
 

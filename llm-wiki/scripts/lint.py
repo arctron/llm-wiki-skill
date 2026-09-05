@@ -15,12 +15,12 @@ REQUIRED_WIKI_KEYS = (
     "source_policy",
     "volatile_days",
 )
-VALID_SITES = ("github-pages", "local", "none")
+VALID_SITES = ("github-pages", "local")
 REQUIRED_PAGE_KEYS = ("title", "layout", "nav_order")
 RAW_MAX_BYTES = 64_000
 WIKILINK_RE = re.compile(r"\[\[[^\]]+\]\]")
 TOKEN_RE = re.compile(
-    r"__(?:TOPIC|SLUG|GITHUB_OWNER|GITHUB_REPO|SITE|PAGES_URL|YEAR|DATE|COPYRIGHT_HOLDER)__"
+    r"__(?:TOPIC|SLUG|GITHUB_OWNER|GITHUB_REPO|SITE|PAGES_URL|HOW_TO_READ|YEAR|DATE|COPYRIGHT_HOLDER)__"
 )
 FENCE_RE = re.compile(r"```.*?```", re.DOTALL)
 MD_LINK_RE = re.compile(r"\[(?:[^\]]*)\]\(([^)]+)\)")
@@ -135,7 +135,7 @@ def lint(root: Path) -> List[str]:
             errors.append("WIKI.md: source_policy must be `excerpts-only`")
         site = wiki_fm.get("site") or ""
         if site and site not in VALID_SITES:
-            errors.append("WIKI.md: site must be `github-pages`, `local`, or `none`")
+            errors.append("WIKI.md: site must be `github-pages` or `local`")
         if site == "github-pages" and not wiki_fm.get("pages_url"):
             errors.append("WIKI.md: pages_url required when site is `github-pages`")
 
@@ -153,8 +153,11 @@ def lint(root: Path) -> List[str]:
         "Gemfile",
         "raw/sources/.gitkeep",
     ]
+    pages_workflow = root / ".github" / "workflows" / "pages.yml"
     if wiki_fm and wiki_fm.get("site") == "github-pages":
         required_files.append(".github/workflows/pages.yml")
+    elif wiki_fm and wiki_fm.get("site") == "local" and pages_workflow.is_file():
+        errors.append(".github/workflows/pages.yml: must not exist when site is `local`")
     for rel in required_files:
         if not (root / rel).is_file():
             errors.append(f"{rel}: missing")

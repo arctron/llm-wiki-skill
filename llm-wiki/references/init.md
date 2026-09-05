@@ -1,6 +1,10 @@
 # Init files
 
-Write these paths under `$WIKI_ROOT`. Replace `__TOPIC__` `__SLUG__` `__GITHUB_OWNER__` `__GITHUB_REPO__` `__SITE__` `__PAGES_URL__` `__YEAR__` `__DATE__` `__COPYRIGHT_HOLDER__` in every file. If `__SITE__` is not `github-pages`, delete `.github/workflows/pages.yml` after writing so Actions does not fail.
+Write these paths under `$WIKI_ROOT`. Replace `__TOPIC__` `__SLUG__` `__GITHUB_OWNER__` `__GITHUB_REPO__` `__SITE__` `__PAGES_URL__` `__HOW_TO_READ__` `__YEAR__` `__DATE__` `__COPYRIGHT_HOLDER__` in every file.
+
+Delete `.github/workflows/pages.yml` after writing unless GitHub has already accepted Pages for this repo (`site` is `github-pages`). First push must not include that workflow.
+
+`__HOW_TO_READ__` is one sentence: either `Read it on GitHub Pages: <url>` or `Read \`docs/\` on GitHub, or ask the agent to serve locally.`
 
 Wiki page bodies and later edits follow [schema.md](schema.md), not this file.
 
@@ -39,7 +43,9 @@ Instance config: `WIKI.md`.
 ```markdown
 # __TOPIC__
 
-LLM-maintained wiki of research conclusions and runbooks. Read it on GitHub Pages: <__PAGES_URL__>
+LLM-maintained wiki of research conclusions and runbooks.
+
+__HOW_TO_READ__
 
 Pages are `docs/`. Optional third-party excerpts are `raw/`. Maintained with the [llm-wiki](https://github.com/arctron/llm-wiki-skill) skill. If you use an agent, see `AGENTS.md`.
 ```

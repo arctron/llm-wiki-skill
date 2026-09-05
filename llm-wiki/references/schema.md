@@ -34,13 +34,13 @@ YAML frontmatter plus a short markdown body (scope, what is in/out). Required fr
 topic: <title>
 slug: <slug>
 github: <owner>/<repo>
-site: github-pages | local | none
+site: github-pages | local
 pages_url: https://<owner>.github.io/<repo>/
 source_policy: excerpts-only
 volatile_days: 90
 ```
 
-`site`: `github-pages` (hosted Actions site), `local` (`bundle exec jekyll serve`), or `none` (markdown only). `pages_url` is required when `site` is `github-pages`; otherwise omit it or leave it empty. GitHub Pages HTML is public to anyone with the URL; a private repo does not make Pages private.
+`site`: `github-pages` (hosted Actions site) or `local` (`bundle exec jekyll serve`, or markdown only). `pages_url` is required when `site` is `github-pages`; otherwise omit it or leave it empty. GitHub Pages HTML is public to anyone with the URL; a private repo does not make Pages private. `.github/workflows/pages.yml` must exist if and only if `site` is `github-pages`.
 
 ## Links
 
